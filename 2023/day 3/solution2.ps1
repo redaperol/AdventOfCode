@@ -2,9 +2,10 @@ class Gear {
     [int]$line
     [Int]$Index
     [hashtable]$ValidPosition
-    [int[]]$Neighboor
+    [int[]]$Neighbour
 
-    GearStar([int]$line,[Int]$Index,[int]$Length,[int]$Count) {
+    Gear([int]$line,[Int]$Index,[int]$Length,[int]$Count) {
+        $this.Neighbour = @()
         $this.line = $line
         $this.Index =$Index
         $this.ValidPosition = @{$this.line=[System.Collections.ArrayList]@()}
@@ -40,58 +41,6 @@ class Gear {
     }
 }
 
-<#
-function Add-ValidPositionFromSymbol {
-    param (
-        [int]
-        $line,
-        
-        [int]
-        $SymbolIndex,
-
-        [int]
-        $Length,
-
-        [hashtable]
-        $ValidPosition
-
-    )
-    #Left and right Position
-    if ($SymbolIndex -gt 0) {
-        $Null = $ValidPosition[$line].Add($SymbolIndex - 1)
-    }
-
-    if ($SymbolIndex -lt $Length) {
-        $Null = $ValidPosition[$line].Add($SymbolIndex + 1)
-    }
-
-    #Down and up
-    if ($line -gt 0) {
-        if ($SymbolIndex -gt 0) {
-            $Null = $ValidPosition[$line - 1].Add($SymbolIndex - 1)
-        }
-    
-        if ($SymbolIndex -lt $Length) {
-            $Null = $ValidPosition[$line - 1].Add($SymbolIndex + 1)
-        }
-
-        $Null = $ValidPosition[$line - 1].Add($SymbolIndex)
-    }
-
-    if ($line -lt 140) {
-        if ($SymbolIndex -gt 0) {
-            $Null = $ValidPosition[$line + 1].Add($SymbolIndex - 1)
-        }
-    
-        if ($SymbolIndex -lt $Length) {
-            $Null = $ValidPosition[$line + 1].Add($SymbolIndex + 1)
-        }
-
-        $Null = $ValidPosition[$line + 1].Add($SymbolIndex)
-    }
-}
-#>
-
 $Content = Get-Content ./input.txt
 $Length = $Content.Length
 
@@ -99,25 +48,30 @@ $Length = $Content.Length
 for ($i = 0; $i -lt $Content.Count; $i++) {
     $SymbolOfLine = ($Content[$i] | Select-String -Pattern "\*" -AllMatches).Matches
     foreach ($Symbol in $SymbolOfLine) {
-        $null = $GearList.Add([GearStar]::new($i,$Symbol.Index,139,139))
+        $null = $GearList.Add([Gear]::new($i,$Symbol.Index,139,139))
     }
 }
-<#
-[System.Collections.ArrayList]$ValidNumber = @()
+
 for ($i = 0; $i -lt $Content.Count; $i++) {
     $NumberOfLine = ($Content[$i] | Select-String -Pattern "\d+" -AllMatches).Matches
+    $neighbourGear = $GearList | Where-Object {($_.line -eq $i - 1) -or ($_.line -eq $i) -or ($_.line -eq $i + 1)}
     foreach ($Number in $NumberOfLine) {
+        [System.Collections.ArrayList]$NumberIndexes = @()
         for ($j = 0; $j -lt $Number.Value.Length; $j++) {
-            if (($Number.Index+$j) -in $ValidPosition[$i]) {
-                write-host "line : $i, Number : $($Number.Value) , position : $($Number.Index + $j)"
-                $null = $ValidNumber.Add($Number.Value)
-                break
+            $null = $NumberIndexes.Add($Number.Index + $j)
+        }
+        foreach($Gear in $NeighbourGear) {
+            $Compare = Compare-Object -ReferenceObject $Gear.ValidPosition[$i] -DifferenceObject $NumberIndexes -ExcludeDifferent -IncludeEqual
+            if ($Compare) {
+                $Null = $Gear.Neighbour+=$Number.Value
             }
+            continue
         }
     }
 }
-$ValidPosition
-$ValidNumber
-Return ($ValidNumber | Measure-Object -Sum).Sum
-#>
-$GearList
+[System.Collections.ArrayList]$Result = @()
+$ValidGear = $GearList | Where-Object {$_.Neighbour.count -eq 2}
+foreach ($Gear in $ValidGear) {
+    $null = $Result.Add($Gear.Neighbour[0]*$Gear.Neighbour[1])
+}
+Return ($Result | Measure-Object -Sum).Sum
