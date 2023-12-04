@@ -6,8 +6,10 @@ class card {
     [ArrayList]$PlayerNumberWinner
     [int]$NumberOfMatch
     [int]$Point
+    [Int]$NumberOfCard
 
     card([string]$Line,[hashtable]$NumberOfEachCard) {
+        $this.NumberOfCard       = 1
         $this.NumberOfMatch      = 0
         $this.WinningNumber      = @()
         $this.PlayerNumber       = @()
@@ -42,6 +44,15 @@ class card {
             $this.Point = [System.Math]::Pow(2,$This.NumberOfMatch- 1)
         }
     }
+    [void] SpawnCard([ArrayList]$CardList) {
+        if ($this.NumberOfMatch -ne 0) {
+            for ($k = 1; $k -lt $this.NumberOfMatch+1; $k++) {
+                $IdCardToIncrease = $this.Id + $k
+                $CardToModify = $CardList | Where-Object Id -EQ $IdCardToIncrease
+                $CardToModify.NumberOfCard+=1*$this.NumberOfCard
+            }
+        }
+    }
 }
 
 [ArrayList]$CardList = @()
@@ -52,20 +63,12 @@ foreach ($Line in $Content) {
 }
 $ResultPart1 = ($CardList | Measure-Object -Property Point -Sum).Sum
 
-
-foreach ($Card in $CardList) {
-    if ($Card.NumberOfMatch -ne 0) {
-        $KeyCard = "Card$($Card.Id)"
-        $NumberOfRepetition = $NumberOfEachCard.$KeyCard
-        for ($i = 0; $i -lt $NumberOfRepetition; $i++) {
-            for ($j = 1; $j -lt $Card.NumberOfMatch + 1; $j++) {
-                $Key = "Card$($Card.Id + $j)"
-                $NumberOfEachCard.$Key++
-            }
-        }
-    }    
+$CardToProcess = $CardList | Where-Object NumberOfMatch -ne 0
+foreach ($Card in $CardToProcess) {
+    $Card.SpawnCard($CardList)
 }
+$ResultPart2 = ($CardList | Measure-Object -Property NumberOfCard -Sum).Sum
 
-$ResultPart2 = ($NumberOfEachCard.Values | Measure-Object -Sum).Sum
+($CardList.NumberOfCard | Measure-Object -Sum).Sum
 Write-Host "Partie 1 = " -NoNewline; Write-Host $ResultPart1 -ForegroundColor Green
 Write-Host "Partie 2 = " -NoNewline; Write-Host $ResultPart2 -ForegroundColor Green
