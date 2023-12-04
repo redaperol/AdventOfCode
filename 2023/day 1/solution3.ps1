@@ -22,7 +22,7 @@ function Convert-StringToInt {
     }
     return $Result
 }
-$content = Get-Content ./input
+$content = Get-Content ./input.txt
 $Pattern = "\d|one|two|three|four|five|six|seven|eight|nine"
 foreach ($line in $content) {
     $StringNumber = (Convert-StringToInt([regex]::match($line,$Pattern).Value)) + (Convert-StringToInt([regex]::match($line,$Pattern,"RightToLeft").Value))

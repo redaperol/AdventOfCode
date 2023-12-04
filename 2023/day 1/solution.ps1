@@ -1,4 +1,4 @@
-$content = Get-Content ./input
+$content = Get-Content ./input.txt
 foreach ($line in $content) {
     $Digit = [regex]::Matches("$line","\d")
     [string]$StringNumber = $Digit[0].Value + $Digit[-1].Value

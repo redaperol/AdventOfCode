@@ -37,7 +37,7 @@ function Assert-GameValidity {
     return $true
 }
 
-$GamesArray = Get-Content ./input
+$GamesArray = Get-Content ./input.txt
 $Result = 0
 foreach ($Game in $GamesArray) {
     [int]$GameId=[regex]::Match($Game,'(\d*):').Value -replace ":",''

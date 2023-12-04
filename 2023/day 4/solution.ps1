@@ -45,7 +45,7 @@ class card {
 }
 
 [ArrayList]$CardList = @()
-$Content = Get-Content ./input
+$Content = Get-Content ./input.txt
 [Hashtable]$NumberOfEachCard = @{}
 foreach ($Line in $Content) {
     $null = $CardList.Add([card]::new($line,$NumberOfEachCard))

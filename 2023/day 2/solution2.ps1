@@ -34,7 +34,7 @@ function Get-GamePower {
     return $Result
 }
 
-$GamesArray = Get-Content ./input
+$GamesArray = Get-Content ./input.txt
 $Result = 0
 foreach ($Game in $GamesArray) {
     $Result += Get-GamePower -Game $Game
