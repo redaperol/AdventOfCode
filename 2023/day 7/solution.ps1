@@ -153,6 +153,6 @@ $Content = Get-Content ../input/day7.txt
 $PokerGame = [PokerGame]::new($Content)
 $PokerGame.AssignAllRank()
 $Results = $PokerGame.GetRankAllProduct()
-Write-Host = $Results
+Write-Host $Results
 return $PokerGame
 
