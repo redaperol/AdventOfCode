@@ -14,10 +14,11 @@ class Hand {
     [int]$Bid
     [int]$Rank
     [Combination]$Combination
-    hidden [Int64] $CardValue
+    hidden [Int] $CardValue
     hidden [hashtable]$HashCard
 
     Hand([string]$RawHand) {
+        $this.CardValue = 0
         $this.Cards = ($RawHand | Select-String -Pattern "^[A-Z,0-9]+").Matches.Value
         $this.Bid = ($RawHand | Select-String -Pattern "\d+$").Matches.Value
         $this.HashCard=@{}
@@ -63,15 +64,9 @@ class Hand {
             "3" = 3
             "2" = 2
         }
-        $this.CardValue = $CardValueMap.[string]$($this.Cards[4])*1 + $CardValueMap.[string]$($this.Cards[3])*100 + $CardValueMap.[string]$($this.Cards[3])*10000 + $CardValueMap.[string]$($this.Cards[3])*1000000 + $CardValueMap.[string]$($this.Cards[2])*100000000 + $CardValueMap.[string]$($this.Cards[1])*10000000000 + $CardValueMap.[string]$($this.Cards[0])*1000000000000
-
-    }
-
-    Hand() {
-        $this.Cards    = ""
-        $this.Bid      = 0
-        $this.Rank     = 0
-        $this.HashCard = @{}
+        for ($i = 0; $i -lt $this.Cards.Length; $i++) {
+            $this.CardValue+= $CardValueMap.[string]$($this.Cards[$i])*[System.Math]::Pow(14,$this.Cards.Length-$i)
+        }
     }
 
     [int] GetRankBidProduct () {
@@ -112,8 +107,6 @@ class PokerGame {
             $OrderedList[$i].Rank = $StartingInt
             $StartingInt++
         }
-        
-        
         return $StartingInt
     }
 

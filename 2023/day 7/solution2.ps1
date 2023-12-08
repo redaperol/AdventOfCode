@@ -14,7 +14,7 @@ class Hand {
     [int]$Bid
     [int]$Rank
     [Combination]$Combination
-    hidden [Int64] $CardValue
+    hidden [Int] $CardValue
     hidden [hashtable]$HashCard
 
     Hand([string]$RawHand) {
@@ -112,17 +112,10 @@ class Hand {
             J   = 1
             
         }
-        $this.CardValue = $CardValueMap.[string]$($this.Cards[4])*1 + $CardValueMap.[string]$($this.Cards[3])*100 + $CardValueMap.[string]$($this.Cards[3])*10000 + $CardValueMap.[string]$($this.Cards[3])*1000000 + $CardValueMap.[string]$($this.Cards[2])*100000000 + $CardValueMap.[string]$($this.Cards[1])*10000000000 + $CardValueMap.[string]$($this.Cards[0])*1000000000000
-
+        for ($i = 0; $i -lt $this.Cards.Length; $i++) {
+            $this.CardValue+= $CardValueMap.[string]$($this.Cards[$i])*[System.Math]::Pow(14,$this.Cards.Length-$i)
+        }
     }
-
-    Hand() {
-        $this.Cards    = ""
-        $this.Bid      = 0
-        $this.Rank     = 0
-        $this.HashCard = @{}
-    }
-
     [int] GetRankBidProduct () {
         $Results = $this.Hand.Bid * $this.Hand.Rank
         return $Results
