@@ -16,7 +16,6 @@ function Get-NewNumber {
         [List[List[int]]]
         $MainList
     )
-    
     for ($z = $MainList.Count-1; $z -ge 0; $z--) {
         $MainList[$z-1].Add($MainList[$z-1][-1] + $MainList[$z][-1])
     }
@@ -27,7 +26,6 @@ function Get-NewNumberPrevious {
         [List[List[int]]]
         $MainList
     )
-    
     for ($z = $MainList.Count-1; $z -ge 0; $z--) {
         $MainList[$z-1].Insert(0,($MainList[$z-1][0] - $MainList[$z][0]))
     }
