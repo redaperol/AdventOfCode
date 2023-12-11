@@ -17,6 +17,10 @@ class Galaxy {
 
         return $DistanceX + $DistanceY
     }
+    [void] SetGalaxyCord([List[int]]$EmptyX,[List[int]]$EmptyY,[int]$SizeExpanxe) {
+        $this.LineIndex = ($EmptyY | Where-Object {$_ -lt $this.LineIndex}).count*$SizeExpanxe + $this.LineIndex
+        $this.LineNumber = ($EmptyX | Where-Object {$_ -lt $this.LineNumber}).count*$SizeExpanxe + $this.LineNumber
+    }
 }
 
 function Get-EmptyGalaxy {
@@ -49,53 +53,9 @@ function Get-EmptyGalaxy {
     return $Empty
 }
 
-function Add-GalaxyExpanse {
-    param (
-        [List[int]]$Empty,
-        [ValidateSet("Row","Collumn")]$mode,
-        [list[string]]$Content
-    )
-    $Drift = 0
-    if ($mode -like "Row") {
-
-        $EmptyLine ="" 
-        for ($i = 0; $i -lt $Content[0].Length; $i++) {
-            $EmptyLine+="."
-        }
-        foreach ($Cord in $Empty) {
-            $Content.Insert($Cord+$Drift,$EmptyLine)
-            $Drift++
-        }
-    }
-    elseif ($mode -like "Collumn") {
-        foreach ($Cord in $Empty) {
-            for ($i = 0; $i -lt $Content.Count; $i++) {
-                $Content[$i] = $Content[$i].Insert($Cord+$Drift,".")
-            }
-            $Drift++
-        }
-    }
-Return $Content
-}
-
-function Write-Galaxy {
-    param(
-        [List[string]]$Content
-    )
-    foreach ($Line in $Content) {
-        Write-Host $Line
-    }
-    Write-Host `n
-}
-
 [list[string]]$Content = Get-Content ../input/day11.txt
-#Write-Galaxy -Content $Content
-$Empty = Get-EmptyGalaxy -Content $Content -mode Row
-$Content = Add-GalaxyExpanse -Content $Content -mode Row -Empty $Empty
-#Write-Galaxy -Content $Content
-$Empty = Get-EmptyGalaxy -Content $Content -mode Collumn
-$Content = Add-GalaxyExpanse -Content $Content -mode Collumn -Empty $Empty
-#Write-Galaxy -Content $Content
+$EmptyX = Get-EmptyGalaxy -Content $Content -mode Row
+$EmptyY = Get-EmptyGalaxy -Content $Content -mode Collumn
 [list[Galaxy]]$ListGalaxy = @()
 $GalaxyID=1
 for ($i = 0; $i -lt $Content.Count; $i++) {
@@ -105,6 +65,11 @@ for ($i = 0; $i -lt $Content.Count; $i++) {
         $GalaxyID++
     }
 }
+
+foreach ($Galaxy in $ListGalaxy) {
+    $Galaxy.SetGalaxyCord($EmptyX,$EmptyY,999999)
+}
+
 $GalaxyID=1
 [List[Galaxy]]$ListGalaxyDistant = @()
 for ($i = 0; $i -lt $Content.Count; $i++) {
@@ -113,6 +78,10 @@ for ($i = 0; $i -lt $Content.Count; $i++) {
         $ListGalaxyDistant.Add([Galaxy]::new($GalaxyID,$i,$FoundStar[$j].Index))
         $GalaxyID++
     }
+}
+
+foreach ($Galaxy in $ListGalaxyDistant) {
+    $Galaxy.SetGalaxyCord($EmptyX,$EmptyY,999999)
 }
 
 [List[string]]$listPair =@()
