@@ -60,4 +60,18 @@ func main() {
 
 	fmt.Println("Done calculatin number diff")
 	fmt.Println("sum is ", sumArray(difArr))
+
+	total := 0
+	for i := 0; i < len(firstNumberArr); i++ {
+		currentNum := firstNumberArr[i]
+		occurence := 0
+		for j := 0; j < len(seconcdNumberArr); j++ {
+			if currentNum == seconcdNumberArr[j] {
+				occurence++
+			}
+		}
+		total += currentNum * occurence
+	}
+	fmt.Println("Done calculatin occurence")
+	fmt.Println("sum is ", total)
 }
