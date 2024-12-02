@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func StringToIntArr(stringArr []string) []int {
@@ -68,6 +69,7 @@ func isSafe(arr []int) bool {
 }
 
 func main() {
+	start := time.Now()
 	file, err := os.Open("input")
 	if err != nil {
 		fmt.Println("pas de bol")
@@ -76,13 +78,31 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	var NumberArr []int
 	var safeCount = 0
+	var FaultyArr [][]int
 	for scanner.Scan() {
 		line := scanner.Text()
 		lineArr := strings.Fields(line)
 		NumberArr = StringToIntArr(lineArr)
 		if isSafe(NumberArr) {
 			safeCount++
+		} else {
+			FaultyArr = append(FaultyArr, NumberArr)
 		}
 	}
-	fmt.Println("NumberArr of safe", safeCount)
+	fmt.Println("Safe report part 1 : ", safeCount)
+	//part 2
+	for i := 0; i < len(FaultyArr); i++ {
+		for j := 0; j < len(FaultyArr[i]); j++ {
+			tempFaultyArr := make([]int, len(FaultyArr[i]))
+			copy(tempFaultyArr, FaultyArr[i])
+			fixedArr := append(tempFaultyArr[:j], tempFaultyArr[j+1:]...)
+			if isSafe(fixedArr) {
+				safeCount++
+				break
+			}
+		}
+	}
+	println("Safe report part 2 : ", safeCount)
+	elapsed := time.Since(start)
+	fmt.Println("took : ", elapsed)
 }
