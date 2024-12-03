@@ -16,19 +16,29 @@ func sumArray(arr []int) int {
 	return res
 }
 
-func main() {
+func GetText(filePath string) []string {
+	var result []string
 	file, err := os.Open("input")
 	if err != nil {
 		fmt.Println("pas de bol")
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		result = append(result, line)
+	}
+	return result
+}
+
+func main() {
+	StringToDo := GetText("testinput")
 	reg := regexp.MustCompile(`mul\((\d{1,3}),(\d{1,3})\)`)
 	var firstNumberArr []int
 	var seconcdNumberArr []int
-	for scanner.Scan() {
-		line := scanner.Text()
-		matches := reg.FindAllStringSubmatch(line, 1000)
+	for j := 0; j < len(StringToDo); j++ {
+		matches := reg.FindAllStringSubmatch(StringToDo[j], 1000)
 		for i := 0; i < len(matches); i++ {
 			num1, err1 := strconv.Atoi(matches[i][1])
 			num2, err2 := strconv.Atoi(matches[i][2])
