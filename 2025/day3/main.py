@@ -31,6 +31,35 @@ def generate_bank(string: str) -> int:
     return int(str(first_max) + str(second_max))
 
 
+def generate_bank2(string: str) -> int:
+    list_int = [int(c) for c in string]
+    list_max = look_for_12(list_int)
+    return list_int_to_int(list_max)
+
+
+def list_int_to_int(list_int: list[int]) -> int:
+    string = ""
+    for d in list_int:
+        string += str(d)
+    return int(string)
+
+
+def search_in_slice(list_int: list[int]):
+    return max(list_int)
+
+
+def look_for_12(list_int: list[int]) -> list[int]:
+    results = []
+    first_index = 0
+    last_index = len(list_int)
+    for i in range(12, 0, -1):
+        last_index = len(list_int) - i + 1
+        r = search_in_slice(list_int[first_index:last_index])
+        first_index = list_int.index(r, first_index, last_index) + 1
+        results.append(r)
+    return results
+
+
 def part1(input) -> int:
     battery_list = []
     parsed = parser(input)
@@ -39,11 +68,24 @@ def part1(input) -> int:
     return sum(battery_list)
 
 
+def part2(input) -> int:
+    battery_list2 = []
+    parsed = parser(input)
+    for line in parsed:
+        battery_list2.append(generate_bank2(line))
+    return sum(battery_list2)
+
+
 if __name__ == '__main__':
     with open("./input") as f:
         input = f.read().strip()
 
     start = time.time_ns()
     print("Part 1:", part1(input), end='')
-    time = (time.time_ns() - start) / 1e6
-    print(" in", time, "ms")
+    time_part_1 = (time.time_ns() - start) / 1e6
+    print(" in", time_part_1, "ms")
+
+    start_part2 = time.time_ns()
+    print("Part 2:", part2(input), end='')
+    time_part_2 = (time.time_ns() - start_part2) / 1e6
+    print(" in", time_part_2, "ms")
