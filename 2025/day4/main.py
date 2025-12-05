@@ -53,7 +53,7 @@ def better_block_evaluator(i, j, threshold: int, bloc_map: dict) -> bool:
 
 def generate_map(length, width: int) -> list[tuple]:
     map = []
-    for j in range(width):
+    for j in range(length):
         for i in range(width):
             map.append((i, j))
     return map
@@ -86,9 +86,7 @@ def main():
 def part1(input: list[str], block_map: dict) -> int:
     location_to_visit = generate_map(len(input), len(input[0]))
     block_counter = 0
-    for coord in location_to_visit:
-        i = coord[0]
-        j = coord[1]
+    for i, j in location_to_visit:
         if better_block_evaluator(i, j, 4, block_map) and not block_map[i][j]:
             block_counter += 1
     return block_counter
