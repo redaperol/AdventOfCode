@@ -6,37 +6,35 @@ def better_file_reader(file_path: str) -> list[str]:
         return [line.strip() for line in file]
 
 
-def better_parser(list_str: list[str], char_to_find: str) -> dict:
-    dic = {}
+def better_parser(list_str: list[str], char_to_find: str) -> list[list[bool]]:
+    list_list = []
     for line_id, line in enumerate(list_str):
-        line_dic = {}
+        line_list = []
         for char_id, char in enumerate(line):
             if char == char_to_find:
-                line_dic[char_id] = True
+                line_list.append(True)
             else:
-                line_dic[char_id] = False
-        dic[line_id] = line_dic
-    return dic
+                line_list.append(False)
+        list_list.append(line_list)
+    return list_list
 
 
-def better_block_evaluator(i, j, threshold: int, bloc_map: dict) -> bool:
+def better_block_evaluator(i, j, threshold: int, bloc_map: list[list[bool]]) -> bool:
     good_block_counter = 0
-    directions = {
-        "top_left":  (i - 1, j + 1),
-        "top":       (i, j + 1),
-        "top_right": (i + 1, j + 1),
-        "left":      (i - 1, j),
-        "right":     (i + 1, j),
-        "bot_left":  (i - 1, j - 1),
-        "bot":       (i, j - 1),
-        "bot_right": (i + 1, j - 1)
-    }
+    directions = [
+        (i - 1, j + 1),
+        (i, j + 1),
+        (i + 1, j + 1),
+        (i - 1, j),
+        (i + 1, j),
+        (i - 1, j - 1),
+        (i, j - 1),
+        (i + 1, j - 1)
+    ]
     counter = 0
-    for d in directions:
-        i_d = directions[d][0]
-        j_d = directions[d][1]
-        max_i = max(bloc_map[j].keys())
-        max_j = max(bloc_map.keys())
+    for i_d, j_d in directions:
+        max_i = len(bloc_map[j]) - 1
+        max_j = len(bloc_map) - 1
         if (i_d < 0 or i_d > max_i) or (j_d < 0 or j_d > max_j):
             good_block_counter += 1
         elif bloc_map[i_d][j_d]:
@@ -63,7 +61,7 @@ def location_updater(model, to_remove: list[tuple]) -> list[tuple]:
     return [coord for coord in model if coord not in to_remove]
 
 
-def map_updater(block_map: dict, coord: list[tuple]):
+def map_updater(block_map: list[list[bool]], coord: list[tuple]):
     for i, j in coord:
         block_map[i][j] = True
 
@@ -83,7 +81,7 @@ def main():
     print(" in", time_part_2, "ms")
 
 
-def part1(input: list[str], block_map: dict) -> int:
+def part1(input: list[str], block_map: list[list[bool]]) -> int:
     location_to_visit = generate_map(len(input), len(input[0]))
     block_counter = 0
     for i, j in location_to_visit:
@@ -92,27 +90,25 @@ def part1(input: list[str], block_map: dict) -> int:
     return block_counter
 
 
-def part2(input: list[str], block_map: dict) -> int:
-    location_to_visit = generate_map(len(input), len(input[0]))
+def part2(input: list[str], block_map: list[list[bool]]) -> int:
+    loc_to_visit = generate_map(len(input), len(input[0]))
     first_time = True
-    location_to_remove = []
-    location_to_update = []
+    loc_to_remove = []
     block_counter = 0
-    while len(location_to_remove) != 0 or first_time:
-        location_to_remove = []
-        location_to_update = []
+    while len(loc_to_remove) != 0 or first_time:
+        loc_to_remove = []
         first_time = False
-        for i, j in location_to_visit:
+        for i, j in loc_to_visit:
             if block_map[i][j]:
-                location_to_remove.append((i, j))
+                loc_to_remove.append((i, j))
 
             elif better_block_evaluator(i, j, 4, block_map):
                 block_counter += 1
-                location_to_update.append((i, j))
-                location_to_remove.append((i, j))
+                loc_to_remove.append((i, j))
 
-        location_to_visit = location_updater(location_to_visit, location_to_remove)
-        map_updater(block_map, location_to_update)
+        loc_to_visit = location_updater(
+            loc_to_visit, loc_to_remove)
+        map_updater(block_map, loc_to_remove)
     return block_counter
 
 

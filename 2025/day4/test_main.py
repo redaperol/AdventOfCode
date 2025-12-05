@@ -20,19 +20,19 @@ TO_REMOVE = [(1, 0), (0, 1)]
 
 EXAMPLE_PARSER = ["..@.", "@.@.", "@..@"]
 
-RESULT_BETTER_PARSER = {
-    0: {0: True, 1: True, 2: False, 3: True},
-    1: {0: False, 1: True, 2: False, 3: True},
-    2: {0: False, 1: True, 2: True, 3: False}
-}
+RESULT_BETTER_PARSER = [
+    [True, True, False, True],
+    [False, True, False, True],
+    [False, True, True, False]
+]
 
 
 class Test_part(unittest.TestCase):
     def test_part1(self):
-        self.assertEqual(13, part1(EXAMPLE))
+        self.assertEqual(13, part1(EXAMPLE, better_parser(EXAMPLE, '.')))
 
     def test_part2(self):
-        self.assertEqual(43, part2(EXAMPLE))
+        self.assertEqual(43, part2(EXAMPLE, better_parser(EXAMPLE, '.')))
 
 
 class Test_func(unittest.TestCase):
@@ -40,4 +40,5 @@ class Test_func(unittest.TestCase):
         self.assertEqual([(0, 0), (1, 1)], location_updater(MODEL, TO_REMOVE))
 
     def test_better_parser(self):
-        self.assertEqual(RESULT_BETTER_PARSER, better_parser(EXAMPLE_PARSER, "."))
+        self.assertEqual(RESULT_BETTER_PARSER,
+                         better_parser(EXAMPLE_PARSER, "."))
