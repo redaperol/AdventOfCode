@@ -1,6 +1,6 @@
 import unittest
 
-from main import part1, part2, map_updater, better_parser
+from main import part1, part2, location_updater, better_parser
 
 EXAMPLE = [
     "..@@.@@@@.",
@@ -37,7 +37,7 @@ class Test_part(unittest.TestCase):
 
 class Test_func(unittest.TestCase):
     def test_map_updater(self):
-        self.assertEqual([(0, 0), (1, 1)], map_updater(MODEL, TO_REMOVE))
+        self.assertEqual([(0, 0), (1, 1)], location_updater(MODEL, TO_REMOVE))
 
     def test_better_parser(self):
         self.assertEqual(RESULT_BETTER_PARSER, better_parser(EXAMPLE_PARSER, "."))
