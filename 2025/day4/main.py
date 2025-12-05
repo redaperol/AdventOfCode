@@ -55,21 +55,27 @@ def generate_map(length, width: int) -> list[tuple]:
     return map
 
 
-def map_updater(model, to_remove: list[tuple]) -> list[tuple]:
+def location_updater(model, to_remove: list[tuple]) -> list[tuple]:
     return [coord for coord in model if coord not in to_remove]
+
+
+def map_updater(block_map: dict, coord: list[tuple]):
+    for i, j in coord:
+        block_map[i][j] = True
 
 
 def main():
     input = better_file_reader("./input")
+
     start = time.time_ns()
     print("Part 1:", part1(input), end='')
     time_part_1 = (time.time_ns() - start) / 1e6
     print(" in", time_part_1, "ms")
 
-    # start_part2 = time.time_ns()
-    # print("Part 2:", part2(input), end='')
-    # time_part_2 = (time.time_ns() - start_part2) / 1e6
-    # print(" in", time_part_2, "ms")
+    start_part2 = time.time_ns()
+    print("Part 2:", part2(input), end='')
+    time_part_2 = (time.time_ns() - start_part2) / 1e6
+    print(" in", time_part_2, "ms")
 
 
 def part1(input: list[str]) -> int:
@@ -81,6 +87,31 @@ def part1(input: list[str]) -> int:
         j = coord[1]
         if better_block_evaluator(i, j, 4, bloc_map) and not bloc_map[i][j]:
             block_counter += 1
+    return block_counter
+
+
+def part2(input: list[str]) -> int:
+    location_to_visit = generate_map(len(input), len(input[0]))
+    bloc_map = better_parser(input, ".")
+    first_time = True
+    location_to_remove = []
+    location_to_update = []
+    block_counter = 0
+    while len(location_to_remove) != 0 or first_time:
+        location_to_remove = []
+        location_to_update = []
+        first_time = False
+        for i, j in location_to_visit:
+            if bloc_map[i][j]:
+                location_to_remove.append((i, j))
+
+            elif better_block_evaluator(i, j, 4, bloc_map):
+                block_counter += 1
+                location_to_update.append((i, j))
+                location_to_remove.append((i, j))
+
+        location_to_visit = location_updater(location_to_visit, location_to_remove)
+        map_updater(bloc_map, location_to_update)
     return block_counter
 
 

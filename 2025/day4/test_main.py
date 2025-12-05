@@ -1,6 +1,6 @@
 import unittest
 
-from main import part1, map_updater, better_parser
+from main import part1, part2, map_updater, better_parser
 
 EXAMPLE = [
     "..@@.@@@@.",
@@ -31,8 +31,8 @@ class Test_part(unittest.TestCase):
     def test_part1(self):
         self.assertEqual(13, part1(EXAMPLE))
 
-#    def test_part2(self):
-#        self.assertEqual(43, part2(EXAMPLE))
+    def test_part2(self):
+        self.assertEqual(43, part2(EXAMPLE))
 
 
 class Test_func(unittest.TestCase):
