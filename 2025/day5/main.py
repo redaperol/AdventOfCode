@@ -58,13 +58,17 @@ def is_in_range(value: int, range_val: tuple[int]) -> bool:
 def actual_range(list_range: list[tuple[int]]):
     better_list = []
     sorted_range = sorted(list_range)
-    # print(sorted_range)
     start_x, candidate_y = sorted_range[0]
     sorted_range.pop(0)
     while len(sorted_range) != 0:
         x, y = sorted_range[0]
+        sorted_range.pop(0)
 
-        if x <= candidate_y or x == candidate_y + 1:
+        if x <= candidate_y:
+            if candidate_y < y:
+                candidate_y = y
+
+        elif x == candidate_y + 1:
             candidate_y = y
 
         else:
@@ -72,30 +76,21 @@ def actual_range(list_range: list[tuple[int]]):
             start_x = x
             candidate_y = y
 
-        sorted_range.pop(0)
         if len(sorted_range) == 0:
             if candidate_y > y:
                 better_list.append((start_x, candidate_y))
             else:
                 candidate_y = y
                 better_list.append((start_x, candidate_y))
-    # print("-----------------------------------------------------------")
-    # print("-----------------------------------------------------------")
-    print(better_list)
     return better_list
 
 
 def calculate_number_id(list_range: list[tuple[int]]) -> int:
     result = 0
     for x, y in list_range:
-        # print(y - x + 1)
         result += y - x + 1
     return result
 
 
 if __name__ == '__main__':
     main()
-
-#  334572241531681
-#  334572241531681
-#  334572241531695
